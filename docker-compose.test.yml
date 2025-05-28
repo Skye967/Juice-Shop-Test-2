@@ -7,3 +7,6 @@ services:
   app:
     image: bkimminich/juice-shop:latest-amd64
     build: ./
+    deploy:
+      mode: replicated
+      replicas: 1
