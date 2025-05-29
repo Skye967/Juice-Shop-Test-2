@@ -21,7 +21,13 @@ export const findFilesWithCodeChallenges = async (paths: readonly string[]): Pro
     if ((await fs.lstat(currPath)).isDirectory()) {
       const files = await fs.readdir(currPath)
       const moreMatches = await findFilesWithCodeChallenges(
-        files.map(file => path.resolve(currPath, file))
+        files.map(file => {
+          const resolvedPath = path.resolve(currPath, file);
+          if (!resolvedPath.startsWith(path.resolve(currPath))) {
+            throw new Error('Path traversal attempt detected.');
+          }
+          return resolvedPath;
+        })
       )
       matches.push(...moreMatches)
     } else {
